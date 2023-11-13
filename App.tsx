@@ -1,20 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
+import React, { useMemo } from 'react'
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme
+} from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { RootStack } from './src/navigation/RootStack'
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme
+} from '@react-navigation/native'
+import { navigationRef } from './src/navigation/utils'
+import { ColorSchemeProvider } from './src/context/colorScheme'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const theme = useColorScheme()
+  const isDark = useMemo(() => theme === 'dark', [theme])
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  return (
+    <ColorSchemeProvider>
+      <SafeAreaProvider
+        style={{ backgroundColor: isDark ? '#131212' : '#fff' }}
+      >
+        <NavigationContainer
+          ref={navigationRef}
+          theme={isDark ? DarkTheme : DefaultTheme}
+        >
+          <StatusBar style="auto" />
+          <SafeAreaView style={{ flex: 1 }}>
+            <RootStack />
+          </SafeAreaView>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </ColorSchemeProvider>
+  )
+}
